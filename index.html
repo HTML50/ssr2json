@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ssr to json</title>
+  <style>
+    
+  </style>
+</head>
+<body>
+
+
+<app>
+
+<container>
+<label>在这里粘贴</label>
+<input id="input">
+</container>
+  output:
+  <textarea id="json">
+    
+  </textarea>
+</app>
+
+<script type="text/javascript" src="base64.js"></script>
+<script>
+
+input.addEventListener('input',function(){
+  var text = input.value;
+
+  if(text.startsWith('ssr://')){
+    text = text.slice(6);
+    ssrDecode(text)
+  }
+
+　　function ssrDecode(text){
+    asyncFromBase64(text,'utf8',function(data){
+    var ip,port,password,group="",obfs="",method="",protocol="",remarks="",protoparam="",obfsparam="",group="",udpport="",uot="";
+     
+
+
+     var arr = data.split(':');
+     var arr2 = arr[5].split('/?')[1];
+
+     ip=arr[0];
+     port=arr[1];
+     protocol =arr[2];
+     method =arr[3];
+     obfs=arr[4];     
+
+     asyncFromBase64(arr[5].split('/?')[0],'utf8',function(data){
+      password=data;
+
+      json.value = `
+      {
+        "server": "${ip}",
+        "server_ipv6": "::",
+        "server_port": "${port}",
+        "local_address": "127.0.0.1",
+        "local_port": 1080,
+        "password": "${password}",
+        "obfs": "${obfs}",
+        "method": "${method}",
+        "ssr_protocol": "${protocol}"
+      }`
+
+    },function(err){
+
+    })
+
+      ;
+    },
+    function(err){
+      alert(err)
+    });  
+}
+      
+})      
+
+
+  </script>
+</body>
+</html>
