@@ -8,10 +8,16 @@
     margin: 0;
   }
   .nav{
-    position: fixed;
+    padding: 10px;
     height: 20px;
-    background: #e8e8e8;
-    width: 100%;
+    background: #e6e6e6;
+    color: #737373;
+    display: flex;
+    justify-content: space-between;
+  }
+  .nav a{
+    color: #737373;
+
   }
     .app{
       margin: auto;
@@ -30,7 +36,7 @@
     display: block;
     transform: translateY(30px);
     padding: 0 10px;
-    transition: all cubic-bezier(.25,.8,.25,1) .25s;
+    transition: all cubic-bezier(.25,.8,.25,1) .5s;
     pointer-events: none;
     transform-origin: left top;
     font-size: 18px;
@@ -64,18 +70,19 @@
       width: 100%;
       margin-top: 10px;
       padding: 10px;
-      height: 50vh;
+      min-height: 40vh;
       outline: none;
       font-size: 18px;
       border: 1px solid #e8e8e8;
      }
 
      #qrcode{
+      height: 100%;
       display: none;
      }
     #qrcode img{
-      height: 100%;
-            margin: 0 auto;
+      height: 32vw;
+      margin: 0 auto;
      }
 
 
@@ -90,7 +97,6 @@
         font-size: 18px;
         outline: none;
         transition: background 0.3s;
-        cursor: pointer;
      }
 
      .buttonArea button:hover{
@@ -99,10 +105,15 @@
 
      .buttonArea .copyBtn{
        background: #e6e6e6;
+       cursor: pointer;
      }
 
       .buttonArea .qrBtn{
        cursor: not-allowed;
+     }
+
+     .not-allowed{
+      cursor: not-allowed !important;
      }
     
     .qrReady{
@@ -122,27 +133,52 @@
       display: none;
      }
 
+.check {
+    position: fixed;
+    left: calc(50% - 30px);
+    top: calc(50% + 30px);
+    border: solid 30px #57bf57;
+    width: 200px;
+    height: 100px;
+    margin: -50px 0 0 -100px;
+    border-top: none;
+    border-right: none;
+    transform: rotate(-45deg);
+    transform-origin: top left;
+    box-shadow: -5px 5px 0 0 rgba(204, 204, 204, 0.5);
+    animation: start 1.3s cubic-bezier(.25,.8,.25,1) infinite both;
+}
+@keyframes start {
+  0% {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  30% {
+    opacity: 1;
+    width: 0;
+    height: 100px;
+  }
 
-     .cover{
-      pointer-events: none;
-      background: #fff;
-      position:absolute;
-      top: 0;
-      width: 120px;height: 100px;
-      animation: move 1s cubic-bezier(.25,.8,.25,1) forwards;
-      }
-    @keyframes move
-    {
-    0%   {left: 0;}
+  80%{
+    width: 200px;
+    opacity: 1;
+  }
 
-    100% {left:120px;}
-    }
+  100%{
+    opacity: 0;
+  }
+}
 
   </style>
 </head>
 <body>
 
-<div class="nav"></div>
+<div class="nav">
+  <span>ssr转JSON/QRcode</span>
+  <span><a href="//github.com/html50/ssr2json">Github</a><span>
+</div>
 
 
 <div class="app">
@@ -157,20 +193,95 @@
   </div>
 
   <div class="buttonArea">
-    <button class="copyBtn">复制</button>
+    <button class="copyBtn">一键复制</button>
     <button class="qrBtn">二维码</button>
   </div>
 </div>
 
 <div class="checkAnimation">
-  <img src="check.png" />
-  <div class="cover"></div>
+  
+  <div class="check"></div>
 </div>
 
 <script src="base64.js"></script>
 <script src="qrcode.min.js"></script>
 <script>
 var tip = document.querySelector('.tip');
+
+
+
+window.onload = function(){
+
+  tip.classList.add('hasFocused')
+}
+//粘贴内容时的变化判断
+input.addEventListener('input',function(){
+  var text = input.value;
+
+  if(text.startsWith('ssr://')){
+    text = text.slice(6);
+    ssrDecode(text)
+  }else if(text===""){
+    tip.innerHTML = '在此粘贴ssr/ss地址'
+    tip.classList.remove('error')
+  }else{
+    tip.innerHTML = '请粘贴正确的ssr/ss地址'
+    tip.classList.add('error')
+  }
+})
+
+
+  //input获得失去焦点
+  input.addEventListener('focus',function(){
+    console.log(1)
+    tip.classList.add('hasFocused')
+  })
+
+  input.addEventListener('blur',function(){
+    console.log(2)
+    if(this.value===''){
+      tip.classList.remove('hasFocused')
+    }
+  })
+
+  //复制按钮
+  document.querySelector('.copyBtn').addEventListener('click',function(){
+    if(json.textLength!==0){
+      selectAll();
+      document.execCommand('copy');
+      showCheck();
+    }
+  })
+
+  //二维码按钮
+  document.querySelector('.qrBtn').addEventListener('click',function(){
+    if(this.innerHTML==='二维码' && document.querySelector('.qrReady')){
+      this.innerHTML = 'JSON配置';
+      json.style.display='none';
+      qrcode.style.display='block';
+      qrcode.innerHTML = '';
+      var tempQR = new QRCode(qrcode, {
+        text: input.value,
+        width: 256,
+        height: 256,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+
+      document.querySelector('.copyBtn').disabled = true;
+      document.querySelector('.copyBtn').classList.add('not-allowed')
+
+    }else{
+      this.innerHTML = '二维码'
+
+      json.style.display='block';
+      qrcode.style.display='none';
+      document.querySelector('.copyBtn').disabled = false;
+      document.querySelector('.copyBtn').classList.remove('not-allowed')
+    }
+  })
+
 
 
 //解码ssr
@@ -201,6 +312,11 @@ function ssrDecode(text){
   "method": "${method}",
   "ssr_protocol": "${protocol}"
 }`
+
+
+tip.innerHTML = '解析完成';
+tip.classList.remove('error');
+    document.querySelector('.qrBtn').classList.add('qrReady');
     },function(err){
       tip.innerHTML = err;
     })
@@ -216,7 +332,7 @@ function showCheck(){
   document.querySelector('.checkAnimation').style.display= 'block';
   setTimeout(function(){
     document.querySelector('.checkAnimation').style.display= 'none';
-  },1000)
+  },1300)
 }
 //全选json内容
 function selectAll(){
@@ -224,84 +340,6 @@ function selectAll(){
   json.setSelectionRange(0,json.textLength)
 }
 
-
-
-//粘贴内容时的变化判断
-input.addEventListener('input',function(){
-  var text = input.value;
-
-  if(text.startsWith('ssr://')){
-    tip.classList.remove('error');
-    document.querySelector('.qrBtn').classList.add('qrReady');
-
-    text = text.slice(6);
-    ssrDecode(text)
-  }else if(text===""){
-    tip.innerHTML = '在此粘贴ssr/ss地址'
-    tip.classList.remove('error')
-  }else{
-    tip.innerHTML = '请粘贴正确的ssr/ss地址'
-    tip.classList.add('error')
-  }
-
-
-
-  //input获得失去焦点
-  input.addEventListener('focus',function(){
-    console.log(1)
-    tip.classList.add('hasFocused')
-  })
-
-  input.addEventListener('blur',function(){
-    console.log(2)
-    if(this.value===''){
-      tip.classList.remove('hasFocused')
-    }
-    
-  })
-
-  //输出框鼠标全选
-  json.addEventListener('mouseover',function(){
-  if(this.textLength!==0){
-    selectAll();
-  }
-  })
-
-
-  //复制按钮
-  document.querySelector('.copyBtn').addEventListener('click',function(){
-    if(json.textLength!==0){
-      selectAll();
-      document.execCommand('copy');
-      showCheck();
-    }
-  })
-
-  //二维码按钮
-  document.querySelector('.qrBtn').addEventListener('click',function(){
-    if(this.innerHTML==='二维码' && document.querySelector('.qrReady')){
-      this.innerHTML = 'JSON配置';
-      json.style.display='none';
-      qrcode.style.display='block';
-      qrcode.innerHTML = '';
-      var tempQR = new QRCode(qrcode, {
-        text: input.value,
-        width: 256,
-        height: 256,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-      });
-    }else{
-      this.innerHTML = '二维码'
-
-      json.style.display='block';
-      qrcode.style.display='none';
-    
-    }
-  })
-
-})
  
  </script>
 </body>
