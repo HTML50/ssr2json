@@ -1,183 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>ssr to json</title>
-  <style>
-  body{
-    margin: 0;
-  }
-  .nav{
-    padding: 10px;
-    height: 20px;
-    background: #e6e6e6;
-    color: #737373;
-    display: flex;
-    justify-content: space-between;
-  }
-  .nav a{
-    color: #737373;
-
-  }
-    .app{
-      margin: auto;
-      width: 50vw;
-      padding: 50px;
-
+    <meta charset="UTF-8">
+    <title>ssr to json</title>
+    <style>
+    body {
+        margin: 0;
     }
 
-    .inputArea{
-      margin: auto;
-      width: 100%;
+    .nav {
+        padding: 10px;
+        height: 20px;
+        background: #e6e6e6;
+        color: #737373;
+        display: flex;
+        justify-content: space-between;
     }
 
-    .tip{
-    color: #868686;
-    display: block;
-    transform: translateY(30px);
-    padding: 0 10px;
-    transition: all cubic-bezier(.25,.8,.25,1) .5s;
-    pointer-events: none;
-    transform-origin: left top;
-    font-size: 18px;
+    .nav a {
+        color: #737373;
     }
 
-    .hasFocused{
-      color: #868686;
-      transform: scale(0.8);
-      color: #3ab549;
+    .app {
+        margin: auto;
+        width: 50vw;
+        padding: 50px;
     }
 
-    .error{
-   color: red;
-    }
-    #input{
-    width: 100%;
-    border: none;
-    border-bottom: 2px solid #d8d8d8;
-    outline: none;
-    padding: 10px;
-    transition:  all cubic-bezier(.25,.8,.25,1) .25s;
+    .inputArea {
+        margin: auto;
+        width: 100%;
     }
 
-     #input:focus{
-      border-bottom-color:#3ab549;
-     }
+    .tip {
+        color: #868686;
+        display: block;
+        transform: translateY(30px);
+        padding: 0 10px;
+        transition: all cubic-bezier(.25, .8, .25, 1) .5s;
+        pointer-events: none;
+        transform-origin: left top;
+        font-size: 18px;
+    }
+
+    .hasFocused {
+        color: #868686;
+        transform: scale(0.8);
+        color: #3ab549;
+    }
+
+    .error {
+        color: red;
+    }
+
+    #input {
+        width: 100%;
+        border: none;
+        border-bottom: 2px solid #d8d8d8;
+        outline: none;
+        padding: 10px;
+        transition: all cubic-bezier(.25, .8, .25, 1) .25s;
+    }
+
+    #input:focus {
+        border-bottom-color: #3ab549;
+    }
 
 
-     #json, #qrcode{
-      display: block;
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      min-height: 40vh;
-      outline: none;
-      font-size: 18px;
-      border: 1px solid #e8e8e8;
-     }
+    #json,
+    #qrcode {
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+        padding: 10px;
+        min-height: 40vh;
+        outline: none;
+        font-size: 18px;
+        border: 1px solid #e8e8e8;
+    }
 
-     #qrcode{
-      height: 100%;
-      display: none;
-     }
-    #qrcode img{
-      height: 32vw;
-      margin: 0 auto;
-     }
+    #qrcode {
+        height: 100%;
+        display: none;
+    }
+
+    #qrcode img {
+        height: 32vw;
+        margin: 0 auto;
+    }
 
 
-     .buttonArea{
+    .buttonArea {
         text-align: center;
-    margin-top: 10px;
-     }
+        margin-top: 10px;
+    }
 
-     .buttonArea button{
-        border:none;
+    .buttonArea button {
+        border: none;
         padding: 8px;
         font-size: 18px;
         outline: none;
         transition: background 0.3s;
-     }
-
-     .buttonArea button:hover{
-        background: #ccc;
-     }
-
-     .buttonArea .copyBtn{
-       background: #e6e6e6;
-       cursor: pointer;
-     }
-
-      .buttonArea .qrBtn{
-       cursor: not-allowed;
-     }
-
-     .not-allowed{
-      cursor: not-allowed !important;
-     }
-    
-    .qrReady{
-      cursor: pointer !important;
-      background: #d8ffd3;
     }
 
-     .checkAnimation{
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      margin: auto;
-      width: 100px;
-      height: 100px;
-      display: none;
-     }
+    .buttonArea button:hover {
+        background: #ccc;
+    }
 
-.check {
-    position: fixed;
-    left: calc(50% - 30px);
-    top: calc(50% + 30px);
-    border: solid 30px #57bf57;
-    width: 200px;
-    height: 100px;
-    margin: -50px 0 0 -100px;
-    border-top: none;
-    border-right: none;
-    transform: rotate(-45deg);
-    transform-origin: top left;
-    box-shadow: -5px 5px 0 0 rgba(204, 204, 204, 0.5);
-    animation: start 1.3s cubic-bezier(.25,.8,.25,1) infinite both;
-}
-@keyframes start {
-  0% {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  30% {
-    opacity: 1;
-    width: 0;
-    height: 100px;
-  }
+    .buttonArea .copyBtn {
+        background: #e6e6e6;
+        cursor: pointer;
+    }
 
-  80%{
-    width: 200px;
-    opacity: 1;
-  }
+    .buttonArea .qrBtn {
+        cursor: not-allowed;
+    }
 
-  100%{
-    opacity: 0;
-  }
-}
+    .not-allowed {
+        cursor: not-allowed !important;
+    }
 
-  </style>
+    .qrReady {
+        cursor: pointer !important;
+        background: #d8ffd3;
+    }
+
+    .checkAnimation {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        width: 100px;
+        height: 100px;
+        display: none;
+    }
+
+    .check {
+        position: fixed;
+        left: calc(50% - 30px);
+        top: calc(50% + 30px);
+        border: solid 30px #57bf57;
+        width: 200px;
+        height: 100px;
+        margin: -50px 0 0 -100px;
+        border-top: none;
+        border-right: none;
+        transform: rotate(-45deg);
+        transform-origin: top left;
+        box-shadow: -5px 5px 0 0 rgba(204, 204, 204, 0.5);
+        animation: start 1.3s cubic-bezier(.25, .8, .25, 1) infinite both;
+    }
+
+    @keyframes start {
+        0% {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        30% {
+            opacity: 1;
+            width: 0;
+            height: 100px;
+        }
+
+        80% {
+            width: 200px;
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
+        }
+    }
+    </style>
 </head>
-<body>
 
-<div class="nav">
-  <span>ssr转JSON/QRcode</span>
-  <span><a href="//github.com/html50/ssr2json">Github</a><span>
+<body>
+    <div class="nav">
+        <span>ssr转JSON/QRcode</span>
+        <span><a href="//github.com/html50/ssr2json">Github</a><span>
 </div>
 
 
@@ -199,7 +204,6 @@
 </div>
 
 <div class="checkAnimation">
-  
   <div class="check"></div>
 </div>
 
@@ -207,8 +211,6 @@
 <script src="qrcode.min.js"></script>
 <script>
 var tip = document.querySelector('.tip');
-
-
 
 window.onload = function(){
 
