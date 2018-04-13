@@ -10,5 +10,5 @@ https://html50.github.io/ssr2json/
 
 ## todo
 
-- 判断ss协议并检测
-- 美化页面
+- [ ] 判断ss协议并检测
+- [x] 美化页面

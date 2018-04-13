@@ -305,14 +305,11 @@ function ssrDecode(text){
       json.value = `
 {
   "server": "${ip}",
-  "server_ipv6": "::",
   "server_port": "${port}",
-  "local_address": "127.0.0.1",
-  "local_port": 1080,
   "password": "${password}",
   "obfs": "${obfs}",
   "method": "${method}",
-  "ssr_protocol": "${protocol}"
+  "protocol": "${protocol}"
 }`
 
 
