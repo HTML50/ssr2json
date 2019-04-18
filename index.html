@@ -223,6 +223,9 @@ input.addEventListener('input',function(){
   if(text.startsWith('ssr://')){
     text = text.slice(6);
     ssrDecode(text)
+  }else if(text.startsWith('ss://')){
+    text = text.slice(5);
+    ssDecode(text)
   }else if(text===""){
     tip.innerHTML = '在此粘贴ssr/ss地址'
     tip.classList.remove('error')
@@ -235,12 +238,10 @@ input.addEventListener('input',function(){
 
   //input获得失去焦点
   input.addEventListener('focus',function(){
-    console.log(1)
     tip.classList.add('hasFocused')
   })
 
   input.addEventListener('blur',function(){
-    console.log(2)
     if(this.value===''){
       tip.classList.remove('hasFocused')
     }
@@ -312,13 +313,47 @@ function ssrDecode(text){
   "protocol": "${protocol}"
 }`
 
-
 tip.innerHTML = '解析完成';
 tip.classList.remove('error');
     document.querySelector('.qrBtn').classList.add('qrReady');
     },function(err){
       tip.innerHTML = err;
     })
+    },
+    function(err){
+      tip.innerHTML = err;
+    });
+}
+
+
+//解码ss
+function ssDecode(text){
+    asyncFromBase64(text,'utf8',function(data){
+    var port,password,ip,method="";
+     
+     var arr = data.split(':');
+
+     method=arr[0];
+
+     ip=arr[1].split('@')[1];
+     password=arr[1].split('@')[0];
+
+     port=arr[2];
+
+           json.value = `
+{
+  "server": "${ip}",
+  "server_port": "${port}",
+  "password": "${password}",
+  "method": "${method}"
+}`
+
+    tip.innerHTML = '解析完成';
+    tip.classList.remove('error');
+    document.querySelector('.qrBtn').classList.add('qrReady');
+
+
+
     },
     function(err){
       tip.innerHTML = err;
